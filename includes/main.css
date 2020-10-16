@@ -1,0 +1,155 @@
+@charset "utf-8";
+
+:root, html, body {
+  outline: none !important;
+  margin: 0 !important;
+  border: 0 !important;
+  padding: 0 !important;
+}
+
+html {
+  width: 100%;
+  height: 100%;
+}
+
+body {
+  font: normal 400 16px/1.2 'SF Pro SC', 'SF Pro Display', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  min-height: 100%;
+}
+
+#footer {
+  margin: 0;
+  border-top: 1px solid #ccc;
+  padding: 0;
+
+  display: block;
+  width: 100%;
+  background: #f2f2f2;
+  text-align: center;
+
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  line-height: 2em;
+}
+
+
+label input[type="radio"] { display: none; }
+
+.radio1 label i {
+  display: inline-block;
+  outline: none;
+  margin: 0;
+  border-radius: 100%;
+  border: 1px solid #cccccc;
+  padding: 0;
+  width: 0.6em;
+  height: 0.6em;
+
+  background: #f2f2f2;
+
+  margin-right: 0.3em; /* radio 与字的间隔 */
+  margin-bottom: 0.1em;
+
+  position: relative;
+  top: 0.1em;
+  left: 0;
+}
+
+.radio1 label input[type="radio"]:checked + :after {
+  display: inline-block;
+  margin: 0;
+  border-radius: 100%;
+  padding: 0;
+  width: 0.6em;
+  height: 0.6em;
+
+  content: "";
+  color: #fff;
+  background: LimeGreen;
+
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.radio2 label i {
+  display: inline-block;
+  outline: none;
+  margin: 0 0.3em 0 0; /* radio 与字的间隔 */
+  border-radius: 0;
+  border: 1px solid #cccccc;
+  padding: 0;
+  width: 0.6em;
+  height: 0.6em;
+
+  background: #f2f2f2;
+
+  position: relative;
+}
+
+.radio2 label input[type="radio"]:checked + :after {
+  margin: 0;
+  border-color: OrangeRed; /* 打勾的颜色 */
+  border-style: solid;
+  border-width: 0 0.15em 0.15em 0;
+  padding: 0;
+  width: 0.25em;
+  height: 0.55em;
+
+  content: "";
+  background: rgba(0,0,0,0);
+
+  transform: rotate(45deg);
+
+  position: absolute;
+  top: -0.15em;
+  left: 0.2em;
+}
+
+
+#nav-bar {
+  border-bottom: 1px solid #ccc;
+  padding: 4px 0;
+  margin-bottom: 4px;
+  background: #f2f2f2;
+  text-align: center;
+}
+
+#nav-bar div {
+  display: inline;
+}
+
+#urls {
+  display: block;
+  outline: none;
+  margin: 0 auto;
+  padding: 5px;
+  border: 1px solid #ccc;
+  width: 80%;
+  min-height: 50vh;
+  border-radius: 5px;
+  resize: none;
+}
+
+@media screen and (min-width: 240px) and (max-width: 600px) {
+  input[type="button"] {
+    display: block;
+    width: 100%;
+    margin-bottom: 5px;
+  }
+
+  #nav-bar label {
+    display: block;
+    outline: none;
+    margin: 0;
+    border: 0;
+    padding: 0 0 0.3em 1em;
+
+    width: 100%;
+    box-sizing: border-box;
+
+    text-align: left;
+  }
+
+}
