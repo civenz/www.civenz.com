@@ -44,9 +44,10 @@ function exptracking() {
   numbers = numbers.split("\n");
   numbers = numbers.filter(function(e){return e}); //删除空元素
   for(let i = 0; i < numbers.length; i++) {
-    no = numbers[i].trim();
-    if(  /-\d-\d-$/.test(no) ) no = no.replace('-1-1-', '');
-
-    window.open( 'https://www.baidu.com/s?ms=1&wd='+no, '_blank').location;
-    }
+    setTimeout(function() {
+      no = numbers[i].trim();
+      if(  /-\d-\d-$/.test(no) ) no = no.replace('-1-1-', '');
+      window.open( 'https://www.baidu.com/s?ms=1&wd='+no, '_blank').location;
+    }, (i - 1 + 1) * 2000); // 延时2秒查询
+  }
 }
