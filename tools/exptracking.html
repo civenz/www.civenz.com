@@ -10,33 +10,29 @@
 <meta http-equiv="pragma" content="no-cache">
 <meta http-equiv="cache-control" content="no-store, no-cache, must-revalidate">
 
-<title>批量打开链接</title>
+<title>快递查询</title>
 <link rel="icon" type="image/png" href="//www.civenz.com/include/icon/icon.png">
 <link rel="apple-touch-icon" href="//www.civenz.com/include/icon/icon.png">
-<link rel="manifest" href="//www.civenz.com/include/manifest/open_urls.json">
+<link rel="manifest" href="//www.civenz.com/include/manifest/exptracking.json">
 
-<link rel="stylesheet" type="text/css" href="//www.civenz.com/include/main.css?ver=0.0.1">
-<link rel="stylesheet" type="text/css" media="print" href="//www.civenz.com/include/noprint.css?ver=0.0.1">
+<link rel="stylesheet" type="text/css" href="//www.civenz.com/include/main.css?ver=0.0.2">
+<link rel="stylesheet" type="text/css" media="print" href="//www.civenz.com/include/noprint.css?ver=0.0.2">
 </head>
 
 <!--[if !IE]><!-->
 <body>
 <div id="nav-bar">
-  <span><input type="button" onclick="clear_urls();" value="清空"></span>
-  <div class="radio1">
-    <label><input type="radio" name="protocol" value="0" checked><i></i>完整链接</label>
-    <label><input type="radio" name="protocol" value="1"><i></i>无 http(s)://</label>
-  </div>
-  <span><input type="button" onclick="open_urls();" value="打开"></span>
+  <span><input type="button" onclick="clear_tracking_no();" value="清空"></span>
+  <span><input type="button" onclick="exptracking();" value="查询"></span>
 </div>
 
-<textarea name="urls" id="urls"></textarea>
+<textarea name="tracking_no" id="tracking_no"></textarea>
 
 <div id="footer">
 &copy; www.civenz.com
 </div>
 
-<script type="text/javascript" charset="utf-8" src="//www.civenz.com/include/open_urls.js?ver=0.0.1"></script>
+<script type="text/javascript" charset="utf-8" src="//www.civenz.com/include/open_urls.js?ver=0.0.2"></script>
 </body>
 <!--<![endif]-->
 <!--[if lte IE 9]><body><script type="text/javascript" src="//www.civenz.com/include/block_ie.js?ver=0.0.1"></script></body><![endif]-->

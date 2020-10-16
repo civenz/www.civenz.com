@@ -1,7 +1,7 @@
 {
-  "version": "0.1",
   "display": "standalone",
   "orientation": "portrait",
+  "version": "0.1",
   "theme_color": "#ffffff",
   "background_color": "#ffffff",
   "short_name": "civenz",

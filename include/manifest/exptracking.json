@@ -4,9 +4,9 @@
   "version": "0.1",
   "theme_color": "#ffffff",
   "background_color": "#ffffff",
-  "short_name": "批量打开链接",
-  "name": "www.civenz.com - 批量打开链接",
-  "description": "添加 批量打开链接 到主屏幕",
+  "short_name": "批量查询快递",
+  "name": "www.civenz.com - 批量查询快递",
+  "description": "添加 批量查询快递 到主屏幕",
   "start_url": "//www.civenz.com/tools/open-url.html",
   "icons": [
     {
