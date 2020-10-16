@@ -120,7 +120,7 @@ label input[type="radio"] { display: none; }
   display: inline;
 }
 
-#urls {
+#urls, #tracking_no {
   display: block;
   outline: none;
   margin: 0 auto;
