@@ -7,7 +7,7 @@
   "short_name": "批量查询快递",
   "name": "www.civenz.com - 批量查询快递",
   "description": "添加 批量查询快递 到主屏幕",
-  "start_url": "//www.civenz.com/tools/open-url.html",
+  "start_url": "//www.civenz.com/tools/exptracking.html",
   "icons": [
     {
       "src": "//www.civenz.com/include/icon/36.png",
