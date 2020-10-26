@@ -1,0 +1,116 @@
+https://developer.mozilla.org/en-US/docs/Web/Manifest
+
+"display": "standalone",     /* fullscreen | standalone | minimal-ui | browser  */
+"orientation": "portrait",   /* any | natural | landscape | landscape-primary | landscape-secondary | portrait | portrait-primary | portrait-secondary */
+"background_color": "red",
+"theme_color": "red",
+
+"dir": "ltr",
+"lang": "zh-Hans",
+"name": "Awesome application",
+"short_name": "Awesome app",
+"description": "Awesome application that will help you achieve your dreams.",
+"start_url": "/index.html"
+ "icons": [
+    {
+      "src": "//www.civenz.com/include/icon/36.png",
+      "sizes": "36x36",
+      "type": "image/png"
+    },
+    {
+      "src": "//www.civenz.com/include/icon/48.png",
+      "sizes": "48x48",
+      "type": "image/png"
+    },
+    {
+      "src": "//www.civenz.com/include/icon/72.png",
+      "sizes": "72x72",
+      "type": "image/png"
+    },
+    {
+      "src": "//www.civenz.com/include/icon/96.png",
+      "sizes": "96x96",
+      "type": "image/png"
+    },
+    {
+      "src": "//www.civenz.com/include/icon/144.png",
+      "sizes": "144x144",
+      "type": "image/png"
+    },
+    {
+      "src": "//www.civenz.com/include/icon/192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "//www.civenz.com/include/icon/256.png",
+      "sizes": "256x256",
+      "type": "image/png"
+    },
+    {
+      "src": "//www.civenz.com/include/icon/512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+ ]
+
+"categories": ["books", "education", "medical"]
+
+"iarc_rating_id": "e84b072d-71b3-4d3e-86ae-31a8ce4e53b7"
+"prefer_related_applications": true
+"related_applications": [
+  {
+    "platform": "play",
+    "url": "https://play.google.com/store/apps/details?id=com.example.app1",
+    "id": "com.example.app1"
+  },
+  {
+    "platform": "itunes",
+    "url": "https://itunes.apple.com/app/example-app1/id123456789"
+  },
+  {
+    "platform": "windows",
+    "url": "https://www.microsoft.com/en-us/store/appsapp/example-app1/id123456789"
+  },
+  {
+    "platform": "chrome_web_store",
+    "url": "https://chrome.google.com/webstore/app/example-app1/id123456789"
+  }
+]
+
+"screenshots" : [
+  {
+    "src": "screenshot1.webp",
+    "sizes": "1280x720",
+    "type": "image/webp"
+  },
+  {
+    "src": "screenshot2.webp",
+    "sizes": "1280x720",
+    "type": "image/webp"
+  }
+]
+
+"serviceworker": {
+  "src": "./serviceworker.js",
+  "scope": "/app",
+  "type": "",
+  "update_via_cache": "none"
+}
+
+"scope": "https://example.com/subdirectory/"    /* 作用域, 如果非范围内回复浏览器访问 */
+"shortcuts" : [
+  {
+    "name": "Today's agenda",
+    "url": "/today",
+    "description": "List of events planned for today"
+  },
+  {
+    "name": "New event",
+    "url": "/create/event"
+  },
+  {
+    "name": "New reminder",
+    "url": "/create/reminder"
+  }
+]
