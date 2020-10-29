@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset='UTF-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge, chrome=1'>
+<meta name='viewport' content='width=device-width, user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0'>
+<meta http-equiv='cache' content='no-cache'>
+<meta http-equiv='expires' content='0'>
+<meta http-equiv='pragma' content='no-cache'>
+<meta http-equiv='cache-control' content='no-store, no-cache, must-revalidate'>
+<title>标签打印</title>
+</head>
+
+<body onload="default_iframe_src()">
+<select name="page_size" id="page_size" style="outline: none;">
+  <option value="5030p.html">50x30 横版</option>
+  <option value="4030p.html">40x30 横版</option>
+  <option value="5070p.html">50x70 竖版</option>
+</select>
+<button onclick="printPageShow();">预览标签刷新</button>
+<button onclick="location.reload(true);">当前页刷新</button>
+<button onclick="print_orders();"> 点击打印 </button>
+
+<div id="print_iframe">
+  <iframe id="iframe_page" scrolling="no" frameborder="0" width="100%" style="margin: 0; border: 0; padding: 0; ontline: none;"></iframe>
+</div>
+
+<div>
+  <p>订单数: <span id="proccessing_count">0<span></p>
+  <textarea cols="150" rows="10" name="priter_data" id="priter_data"></textarea>
+</div>
+
+<script type="text/javascript">
+
+function orderData() {
+  var ordersData = document.querySelector("#priter_data").value.replace(/\t/g, '|');
+  snsArr = ordersData.split(/[(\r\n)\r\n]+/);
+  snsArr.forEach((item, index)=>{
+    if(!item) {
+      snsArr.splice(index, 1);//删除空项
+    }
+  });
+  return snsArr
+}
+/* 订单数: 输入就侦听 */
+document.getElementById("priter_data").addEventListener('input', function(event) {
+  snsArr = orderData();
+  document.querySelector("#proccessing_count").innerHTML = snsArr.length;
+}, false);
+
+/* 打印订单 */
+function print_orders() {
+  snsArr = orderData();
+  printOrders(snsArr);
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+document.getElementById("page_size").addEventListener('change', function(event) {
+  document.getElementById("iframe_page").src    = document.getElementById("page_size").value;
+  document.getElementById("iframe_page").setAttribute("onload", "auto_resize();");
+});
+
+function printPageShow() {
+  document.getElementById("iframe_page").contentWindow.location.reload(true);
+  auto_resize();
+}
+
+function default_iframe_src() {
+  document.getElementById("iframe_page").src    = document.getElementById("page_size").value;
+  document.getElementById("iframe_page").setAttribute("onload", "auto_resize();");
+}
+
+function auto_resize() {
+  var iframe = document.getElementById("iframe_page");
+  var iframeWin = iframe.contentWindow || iframe.contentDocument.parentWindow;
+  if (iframeWin.document.body) iframe.height = iframeWin.document.body.scrollHeight;
+  iframe.style.visibility    = "visible";
+}
+
+function printOrders(orders) {
+    for (let i = 0; i < orders.length; i++) {
+        setTimeout(function() {
+            document.getElementById("print_iframe").removeChild(document.getElementById('iframe_page'));
+
+            var iPage     = document.getElementById("page_size").value;
+
+            var iframeA   = document.createElement("iframe");
+            iframeA.src   = iPage + '#' + encodeURIComponent(orders[i]);
+            console.log(iframeA.src);
+            iframeA.id    = 'iframe_page';
+
+            iframeA.style.margin        = "0";
+            iframeA.style.border         = "0";
+            iframeA.style.padding       = "0";
+            iframeA.style.outline       = "none";
+            iframeA.style.visibility    = "hidden";
+            iframeA.height              = "0";
+
+            document.getElementById('print_iframe').appendChild(iframeA);
+
+            iframeA.contentWindow.print();
+            // console.log(iframeA.src);
+
+        }, (i - 1 + 1) * 1000); // 建议大于1000毫秒
+    }
+}
+
+</script>
+
+</body>
+</html>

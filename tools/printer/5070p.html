@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>70x50mm 竖版标签纸</title>
+<meta charset='UTF-8'>
+<meta http-equiv='cache' content='no-cache'>
+<meta http-equiv='expires' content='0'>
+<meta http-equiv='pragma' content='no-cache'>
+<meta http-equiv='cache-control' content='no-store, no-cache, must-revalidate'>
+<meta name='viewport' content='width=device-width, user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0'>
+
+<style type="text/css">
+@charset "utf-8";
+
+/**
+ * 
+ * 仿宋: \4eff\5b8b
+ * 宋体: \5b8b\4f53
+ * 微软雅黑: \5FAE\8F6F\96C5\9ED1
+ * 
+
+@font-face {
+  font-family: '\5FAE\8F6F\96C5\9ED1';
+  unicode-range: U+2E80-FFFF;
+  src: local('Microsoft YaHei Light');
+  src: local('Consolas');
+  src: url('fonts/consola.ttf');
+  src: local('Georgia');
+  src: url('fonts/georgia.ttf');
+  src: local('\4eff\5b8b');
+  src: url('fonts/simfang.ttf');
+}
+
+/**/
+
+@font-face {
+  font-family: 'print_font';
+  unicode-range: U+0-3F; /* 0-9 */
+  src: local('Consolas');
+}
+
+@font-face {
+  font-family: 'print_font';
+  unicode-range: U+40-7F; /* a-z */
+  src: local('Georgia');
+}
+
+@font-face {
+  font-family: 'print_font';
+  unicode-range: U+80-10FFFF; /* 中文字符 */
+  src: local('Microsoft YaHei Light');
+}
+
+:root {
+  overflow: hidden;
+  outline: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: #ffffff;
+}
+
+html {
+  box-sizing : border-box;
+  overflow: hidden;
+  outline: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: #ffffff;
+}
+
+body {
+  box-sizing : border-box;
+  overflow: hidden;
+  width: 70mm;
+  height: 50mm;
+  outline: none;
+  margin: 0;
+  border: 0;
+  padding: 0;
+  background:#ffffff;
+  /* 无衬线体 Sans-serif : Helvetica Neue, Helvetica, Arial, Tahoma, Verdana */
+  /* 有衬线体 Serif : Times New Roman, Georgia, 宋体 */
+  /* "SF Pro SC","HanHei SC","Segoe UI","PingFang SC","Helvetica Neue","Helvetica","Arial",sans-serif */
+  font-family: 'print_font', 'Microsoft YaHei Light', 'SimSun', '\5FAE\8F6F\96C5\9ED1', '\5b8b\4f53';
+}
+
+#content {
+  box-sizing : border-box;
+  border: 1px solid #000;
+  width: 70mm;
+  height: 50mm;
+  font-size: 12pt; /* 最小 9pt */
+  line-height: 14pt;
+}
+
+#detail {
+  padding-left: 2mm;
+} 
+
+#barcode{
+  box-sizing : border-box;
+  width: 100%;
+  margin: 0;
+  border: 0;
+  padding: 0;
+}
+
+@media print {
+  @page {
+    size: 70mm 50mm; /* 设置打印页面大小: auto; a4 portrait; a4 landscape; a4; 78mm 30mm; */
+    margin: 0;
+    /**
+    orphans: 1;
+    widows: 1;
+    **/
+  }
+  /** 打印纸横竖设置: landscape 横;  portrait 竖; body 样式也要设置: page : rotated; **/
+  @page rotated { size : portrait } /* portrait | landscape */
+
+  body {
+    page : rotated;
+    overflow: hidden;
+    width: 50mm;
+    height:: 70mm;
+  }
+
+  #content {
+    border: 0px solid #000 ;
+    overflow: hidden;
+    /** 竖版 **/
+    transform: rotate(90deg);
+    transform-origin: right bottom;
+    position: fixed;
+    right: 100vw;
+    bottom: 0;
+    /** 竖版 **/
+  }
+}
+
+</style>
+
+</head>
+<body>
+
+<div id="content">
+  <div><img id="barcode" src=""></div>
+  <div id="detail">
+    <div>订单: <span id='print_order_num'></span></div>
+    <div>运单: <span id='print_trucking_num'></span></div>
+    <div>联系: <span id='print_name'></span> <span id='print_tel'></span></div>
+    <div>店铺: <span id='print_shop'></span></div>
+    <div>备注: <span id='print_remark'></span></div>
+    <div>日期: <span id='print_date'></span></div>
+  </div>
+</div>
+
+</body>
+
+<script type="text/javascript" src="html2canvas.min.js"></script>
+<script type="text/javascript" src="JsBarcode.code128.min.js"></script>
+<script>
+let pageParam = decodeURIComponent(window.location.hash.substr(1)).split("|");
+
+let print_order_num     = '4711213626314851180';
+let print_trucking_num  = 'YT2095978621741';
+let print_name          = '韦小宝';
+let print_tel           = '10123456789';
+let print_shop          = '安静曼';
+let print_remark        = '商品数量不符';
+let print_date          = '20201029';
+
+if(pageParam != "") {
+  print_order_num     = pageParam[4] ? pageParam[4] : '9999999999999999999';
+  print_trucking_num  = pageParam[3] ? pageParam[3] : '';
+  print_name          = pageParam[1] ? pageParam[1] : '';
+  print_tel           = pageParam[2] ? pageParam[2] : '';
+  print_shop          = pageParam[6] ? pageParam[6] : '';
+  print_remark        = pageParam[7] ? pageParam[7] : '';
+  print_date          = pageParam[0] ? pageParam[0] : '';
+}
+
+document.getElementById('print_order_num').innerHTML    = print_order_num;
+document.getElementById('print_trucking_num').innerHTML = print_trucking_num;
+document.getElementById('print_name').innerHTML         = print_name;
+document.getElementById('print_tel').innerHTML          = print_tel;
+document.getElementById('print_shop').innerHTML         = print_shop;
+document.getElementById('print_remark').innerHTML       = print_remark;
+document.getElementById('print_date').innerHTML         = print_date;
+
+function textToBase64Barcode(orderBarcode) {
+  var canvas = document.createElement("canvas");
+  JsBarcode(canvas, orderBarcode, {
+    width: 2,
+    height: 50,
+    format: "CODE128",
+    background: "#ffffff",
+    lineColor: "#000000",
+    displayValue: false,
+    fontOptions: "",
+    font: "Consolas",
+    textAlign: "center",
+    textPosition: "bottom",
+    textMargin: 2,
+    fontSize: 20,
+    margin: 0,
+    marginTop: 2,
+    marginLeft: 10,
+    marginBottom: 2,
+    marginRight: 10,
+  });
+  return canvas.toDataURL("image/png");
+}
+
+document.getElementById("barcode").src = textToBase64Barcode(print_order_num);
+</script>
+</html>
