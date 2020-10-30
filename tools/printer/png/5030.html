@@ -29,91 +29,64 @@
   src: local('Microsoft YaHei Light');
 }
 
-* {box-sizing : border-box;}
-:root, html {
-  overflow: hidden;
+* {
+  box-sizing : border-box;
   outline: none;
   margin: 0;
   padding: 0;
   border: 0;
-  background: #ffffff;
+}
+
+html, body, #content {
+  overflow: hidden;
 }
 
 body {
   width: 50mm;
   height: 30mm;
-  outline: none;
-  margin: 0;
-  border: 0;
-  padding: 0;
-  background:#ffffff;
+
   /* 无衬线体 Sans-serif : Helvetica Neue, Helvetica, Arial, Tahoma, Verdana */
   /* 有衬线体 Serif : Times New Roman, Georgia, 宋体 */
   /* "SF Pro SC","HanHei SC","Segoe UI","PingFang SC","Helvetica Neue","Helvetica","Arial",sans-serif */
   font-family: 'print_font', 'Microsoft YaHei Light', 'SimSun', '\5FAE\8F6F\96C5\9ED1', '\5b8b\4f53';
   font-size: 20pt; /* 最小 9pt, 更小字体结合 transform: scale(0.5) 处理. */
   line-height: 22pt;
+  background:#ffffff;
+}
+
+#content {
+  border: 0px solid #000;
+  white-space: nowrap;
+  width: 50mm;
+  height: 30mm;
+
+  /** 竖版 **
+  transform: rotate(90deg) translateY(-50mm);
+  transform-origin: left top;
+  /** 竖版 **/
 }
 
 #detail {
   transform: scale(0.4);
   transform-origin: 0 0;
+  padding: 0 2mm;
 }
 
-#content {
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  border: 0px solid #000; /* 纸张边框, 开发调试 */
-  padding: 1mm;
-  white-space: nowrap;
-}
-
-img {
-  width: 100%;
-  height: 100%;
-}
-
-#barcode-div, #bcTarget {
+#barcode-div, #bcTarget, img {
   width: 100%;
 }
 
 #barcode-div {
-  padding: 0mm 1mm 0 1mm;
+  padding: 0mm 2%;
 }
 
 @media print {
-
-  body, img {
-    width: 100vw;
-    height: 100vh;
-    overflow: hidden;
-  }
-
-  /** landscape 横版 **/
   @page {
-    size: landscape;
+    size: landscape; /* 设置打印页面大小: landscape; portrait; a4; 78mm 30mm; auto; */
+    margin: 0;
+    orphans: 0;
+    widows: 0;
   }
-  img {
-    width: 100vw;
-    height: 100vh;
-  }
-  /** landscape 横版 **/
-
-  /** portrait 竖版 **
-  @page {
-    size: portrait;
-  }
-  img {
-    width: 100vh;
-    height: 100vw;
-    transform: rotate(90deg);
-    transform-origin: left bottom;
-    position: absolute;
-    top: -100vw;
-    left: 0;
-  }
-  /** portrait 竖版 **/
 }
 
 </style>
@@ -133,8 +106,8 @@ img {
 </div>
 </body>
 
-<script type="text/javascript" src="html2canvas.min.js"></script>
-<script type="text/javascript" src="JsBarcode.code128.min.js"></script>
+<script type="text/javascript" src="../html2canvas.min.js"></script>
+<script type="text/javascript" src="../JsBarcode.code128.min.js"></script>
 <script>
 let pageParam = decodeURIComponent(window.location.hash.substr(1)).split("|");
 
@@ -201,9 +174,29 @@ html2canvas(document.querySelector("#content"), {
 
   document.getElementById("imgLabel").src = canvas.toDataURL("image/png");
 
-  window.print();
+  setTimeout(function() {
+    printpage();
+  }, 1500);
 });
 
+function printpage(){
+  var beforePrint = function() {
+    console.log('beforePrint');
+  }
+  var afterPrint = function() {
+    console.log('afterPrint');
+    setTimeout(function() {
+      window.close();
+    }, 200);
+  }
+
+  window.onbeforeprint = beforePrint;
+  window.onafterprint = afterPrint;
+
+  window.print();
+}
+
+/**
 (function() {
   if (window.matchMedia) {
     var mediaQueryList = window.matchMedia('print');
@@ -214,6 +207,8 @@ html2canvas(document.querySelector("#content"), {
     });
   }
 }());
+**/
+
 </script>
 
 </html>
