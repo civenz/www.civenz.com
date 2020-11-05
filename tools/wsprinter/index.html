@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+<meta name="viewport" content="width=device-width, user-scalable=no, viewport-fit=cover, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
+<meta name="format-detection" content="telephone=no" />
+<meta http-equiv="cache" content="no-cache">
+<meta http-equiv="expires" content="0">
+<meta http-equiv="pragma" content="no-cache">
+<meta http-equiv="cache-control" content="no-store, no-cache, must-revalidate">
+
+<title>WebSocket Printer</title>
+</head>
+
+<!--[if !IE]><!-->
+<body onload="doConnect();">
+
+<div id="content">
+
+<p>
+  <a href="https://www.taobao.com/markets/cnwww/print" target="_blank">菜鸟打印组件介绍</a>
+  -
+  【 <a href="https://cdn-cloudprint.cainiao.com/waybill-print/client/CNPrintSetup.exe">下载</a> 】
+</p>
+
+<select id="printerList" style="width: 300px;" onchange="changePrinter(this.value)"><option>请确认已运行 CAINIAO 打印组件</option></select>
+
+<button onclick="doConnect();"> 创建链接 </button>
+<button onclick="doDisconnect();"> 关闭链接 </button>
+<button onclick="doGetPrinterConfig();"> 获取打印机配置 </button>
+<button onclick="doSetPrinterConfig();"> 设置打印机配置 </button>
+<button onclick="doPrinterConfig();"> 打印机选项 </button>
+<button onclick="doPrint(false, false, true);"> 打印预览 </button>
+<button onclick="doPrint();"> 打印 </button>
+<!--
+<button onclick="doGetPrinters();"> 获取打印机列表 </button>
+<button onclick="doGetAgentInfo();"> 获取客户端版本信息 </button>
+-->
+</div>
+
+<div>
+  <p>订单数: <span id="proccessing_count">0<span></p>
+  <textarea cols="150" rows="10" name="priter_data" id="priter_data"></textarea>
+</div>
+
+<div id="footer">
+  &copy; www.civenz.com
+</div>
+
+<script>
+function orderData() {
+  var ordersData = document.querySelector("#priter_data").value.replace(/\t/g, '|');
+  snsArr = ordersData.split(/[(\r\n)\r\n]+/);
+  snsArr.forEach((item, index)=>{
+    if(!item) {
+      snsArr.splice(index, 1);//删除空项
+    }
+  });
+  return snsArr
+}
+/* 订单数: 输入就侦听 */
+document.getElementById("priter_data").addEventListener('input', function(event) {
+  snsArr = orderData();
+  document.querySelector("#proccessing_count").innerHTML = snsArr.length;
+}, false);
+
+/** 菜鸟打印组件教程 **/
+
+var socket;
+var printerList       = document.getElementById("printerList");
+var httpSocket        = 'ws://127.0.0.1:13528';
+var httpsSocket       = 'wss://localhost:13529';
+var isHttps           = 'https:' === document.location.protocol;
+
+// 通过 websocket 链接菜鸟打印组件
+function doConnect() {
+
+  socket = new WebSocket(isHttps ? httpsSocket : httpSocket);
+
+  // 打开Socket
+  socket.onopen = function(event) {
+    doGetPrinters();
+    // 监听消息
+    socket.onmessage = function(event) {
+      //if(event.readyState == 1) document.getElementById("printer_status").innerHTML = '已连接';
+
+      var response = JSON.parse(event.data);
+
+      switch(response.cmd){
+        case 'getPrinters':
+          //console.log(getPrintersInfo);
+          if( response && response.printers.length > 0 ) {
+            //console.log('当前打印机:', response.defaultPrinter);
+            //console.log('打印机列表:', response.printers);
+            setSelectPrinterOptions(response.printers, response.defaultPrinter);
+          } else {
+            console.log(event);
+            return;
+          }
+          break;
+
+        case 'printerConfig':
+          break;
+
+        case 'getPrinterConfig':
+          //console.log(response);
+          break;
+
+        case 'setPrinterConfig':
+          //console.log(response);
+          break;
+        case 'print':
+          //console.log(response);
+
+          if(response.previewURL) {
+            window.open(response.previewURL, "_blank");
+          }
+          break;
+
+        case 'getAgentInfo':
+          //console.log(response.version);
+          break;
+
+        default:
+          break;
+      }
+
+    };
+
+    // 监听Socket的关闭
+    socket.onclose = function(event) {
+      printerList.innerHTML = '<option>未连接打印组件</option>';
+    };
+  };
+  return status;
+}
+
+// 关闭 Socket 链接
+function doDisconnect() {
+  socket.close();
+}
+
+// 构造request对象
+function getRequestObject(cmd) {
+  var request = new Object();
+  request.requestID = getUUID(8, 16);
+  request.version = "1.0";
+  request.cmd=cmd;
+  return request;
+}
+
+//获取打印机列表
+function doGetPrinters() {
+  var request = getRequestObject("getPrinters");
+  if (socket.readyState === 1) {
+    socket.send(JSON.stringify(request));
+  }
+}
+
+// 打印机配置
+function doPrinterConfig(printer) {
+  var request = getRequestObject("printerConfig");
+  if(printer) request.printer = printer;
+  if (socket.readyState === 1) {
+    socket.send(JSON.stringify(request));
+  }
+}
+
+// 获取打印机配置
+function doGetPrinterConfig(printer) {
+  var request = getRequestObject("getPrinterConfig");
+  if(printer) {
+    request.printer = printer;
+  } else {
+    request.printer = printerList.value;
+  }
+
+  if (socket.readyState === 1) {
+    socket.send(JSON.stringify(request));
+  }
+}
+
+// 设置打印机
+function doSetPrinterConfig() {
+  var request = getRequestObject("setPrinterConfig");
+  request.printer = {
+    name: printerList.value,  //打印机名称
+    needTopLogo: false,       //是否需要模板上联的快递logo
+    needBottomLogo: false,    //是否需要模板下联的快递logo
+    horizontalOffset: 0.0,    //水平偏移量
+    verticalOffset: 0.0,      //垂直偏移量
+    forceNoPageMargins: true, //强制设置页面无空边
+    autoOrientation: false,   //按照 orientation 适应纸张方向
+    orientation: 1,           //0:纵向; 1: 横向
+    autoPageSize: false,      //自适应纸张大小
+    paperSize: {
+      width: 50,              //打印机纸张的宽度，单位是毫米
+      height: 70,             //打印机纸张的高度，单位是毫米
+    },
+  }
+  socket.send(JSON.stringify(request));
+}
+
+//发送打印/预览数据协议(print)
+function doPrint(printer, printData, isPreview = false) {
+  if(!printer) printer      = printerList.value;
+  if(!printData) printData  = orderData();
+
+  var request   = getRequestObject("print");
+  request.task  = {
+    taskID:               getUUID(8, 10),
+    printer:              printer,
+    preview:              isPreview,
+    previewType:          "pdf", // default: pdf | image
+    //firstDocumentNumber:  1,
+    //totalDocumentCount:   1,
+  }
+
+  var documents = new Array();
+
+  for(i=0; i < printData.length; i++) {
+    var doc = new Object();
+    doc.documentID = getUUID(8, 10);
+
+    var contents = new Array();
+    var icontent = new Object();
+
+    icontent.templateURL = "https://www.civenz.com/tools/waprinter/print.xml?ver=0.0.1";
+
+    let print_order_num     = '4711213626314851180';
+    let print_trucking_num  = 'YT2095978621741';
+    let print_name          = '韦小宝';
+    let print_tel           = '10123456789';
+    let print_shop          = '安静曼';
+    let print_remark        = '商品数量不符';
+    let print_date          = '20201029';
+
+    var pageParam = printData[i].split("|");
+    if(pageParam != "") {
+      print_order_num     = pageParam[4] ? pageParam[4] : '9999999999999999999';
+      print_trucking_num  = pageParam[3] ? pageParam[3] : '';
+      print_name          = pageParam[1] ? pageParam[1] : '';
+      print_tel           = pageParam[2] ? pageParam[2] : '';
+      print_shop          = pageParam[6] ? pageParam[6] : '';
+      print_remark        = pageParam[7] ? pageParam[7] : '';
+      print_date          = pageParam[0] ? pageParam[0] : '';
+    }
+
+
+    icontent.data = {
+      orderNum:     print_order_num,
+      trackingNum:  print_trucking_num,
+      name:         print_name,
+      tel:          print_tel,
+      shop:         print_shop,
+      remark:       print_remark,
+      date:         print_date,
+     }
+
+     contents.push(icontent);
+
+    doc.contents  = contents;
+    documents.push(doc);
+  }
+
+  request.task.documents = documents;
+
+  socket.send(JSON.stringify(request));
+}
+
+//打印通知(notifyPrintResult)
+
+//获取任务打印任务状态(getTaskStatus)
+
+//获取全局配置(getGlobalConfig)
+
+//设置全局配置(setGlobalConfig)
+
+//获取客户端版本信息
+function doGetAgentInfo() {
+  var request = getRequestObject("getAgentInfo");
+  socket.send(JSON.stringify(request));
+}
+
+
+function getUUID(len, radix) {
+  var chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.split('');
+  var uuid = [], i;
+  radix = radix || chars.length; 
+  if (len) {
+    for (i = 0; i < len; i++) uuid[i] = chars[0 | Math.random()*radix];
+  } else {
+    var r;
+    uuid[8] = uuid[13] = uuid[18] = uuid[23] = '-';
+    uuid[14] = '4';
+    for (i = 0; i < 36; i++) {
+      if (!uuid[i]) {
+        r = 0 | Math.random()*16;
+        uuid[i] = chars[(i == 19) ? (r & 0x3) | 0x8 : r];
+      }
+    }
+  }
+  return uuid.join('');
+}
+
+function setSelectPrinterOptions(printers, defaultPrinter) {
+  printerList.innerHTML = '';
+
+  for(var i=0; i < printers.length; i++) {
+		var option = document.createElement('option');
+		var printerName   = printers[i].name;
+		option.innerHTML  = printerName;
+		option.value      = printerName;
+    if(defaultPrinter == printers[i].name) option.selected = "selected";
+    printerList.appendChild(option);
+  }
+}
+
+function changePrinter(printer) {
+  doGetPrinterConfig(printer);
+}
+</script>
+
+</body>
+
+</html>

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<page
+  xmlns="http://cloudprint.cainiao.com/print"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://cloudprint.cainiao.com/print http://cloudprint-docs-resource.oss-cn-shanghai.aliyuncs.com/lpml_schema.xsd"
+  xmlns:editor="http://cloudprint.cainiao.com/schema/editor"
+  width="50"
+  height="30"
+  splitable="false" >
+
+<!-- 划线
+<line startX="0" startY="0" endX="50" endY="0" style="lineType: solid; lineWidth: 0.5;" />
+<line startX="0" startY="0" endX="0" endY="30" style="lineType: solid; lineWidth: 0.5;" />
+<line startX="0" startY="29.9" endX="50" endY="29.9" style="lineType: solid; lineWidth: 0.5;" />
+<line startX="49.9" startY="0" endX="49.9" endY="30" style="lineType: solid; lineWidth: 0.5;" />
+划线 //-->
+
+<header height="0"></header>
+<footer height="0"></footer>
+
+<layout width="50" height="30" left="0" top="0" splitable="false" style="zIndex: 1; overflow: hidden; backgroundColor: #ffffff; borderWidth: 0; borderStyle: solid;">
+
+<table width="50" style="borderWidth: 0; cellBorderWidth: 0;">
+
+  <tr>
+    <th width="100%" height="7">
+      <!-- <image src="<%=_data.barcodeUrl%>" allowFailure="true" /> -->
+      <barcode width="50" height="7" type="code128a" style="hideText:true"><%=_data.orderNum%></barcode>
+    </th>
+  </tr>
+
+  <tr>
+    <td height="23">
+      <layout width="46" height="19" orientation="vertical" style="padding: 2; overflow: hidden;">
+        <text width="46" style="fontFamily: simhei;"><![CDATA[订单: <%=_data.orderNum%>]]></text>
+        <text width="46" style="fontFamily: simhei;"><![CDATA[运单: <%=_data.trackingNum%>]]></text>
+        <text width="46" style="fontFamily: simhei;"><![CDATA[联系: <%=_data.name%> <%=_data.tel%>]]></text>
+        <text width="46" style="fontFamily: simhei;"><![CDATA[店铺: <%=_data.shop%>]]></text>
+        <text width="46" style="fontFamily: simhei;"><![CDATA[备注: <%=_data.remark%>]]></text>
+        <text width="46" style="fontFamily: simhei;"><![CDATA[日期: <%=_data.date%>]]></text>
+      </layout>
+    </td>
+  </tr>
+
+</table>
+
+</layout>
+
+
+<!--
+<layout width="50" height="30" left="0" top="0" style="borderWidth: 0.5; borderStyle: solid;">
+
+<layout width="50" height="7" left="0" top="1">
+<image src="<%=_data.barcodeUrl%>" allowFailure="true" />
+</layout>
+
+<layout left="2" top="9">
+<text style="fontFamily: 黑体; fontSize: 9;">
+<![CDATA[订单: <%=_data.orderNum%>]]>
+<![CDATA[运单: <%=_data.trackingNum%>]]>
+<![CDATA[联系: <%=_data.name%> <%=_data.tel%>]]>
+<![CDATA[店铺: <%=_data.shop%>]]>
+<![CDATA[备注: <%=_data.remark%>]]>
+<![CDATA[日期: <%=_data.date%>]]>
+</text>
+</layout>
+
+</layout>
+-->
+
+</page>
