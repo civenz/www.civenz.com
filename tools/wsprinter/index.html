@@ -206,6 +206,7 @@ function doSetPrinterConfig() {
 function doPrint(printer, printData, isPreview = false) {
   if(!printer) printer      = printerList.value;
   if(!printData) printData  = orderData();
+  if(!printData.length && printData.length < 1) return;
 
   var request   = getRequestObject("print");
   request.task  = {
