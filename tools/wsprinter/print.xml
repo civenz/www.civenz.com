@@ -5,7 +5,7 @@
   xsi:schemaLocation="http://cloudprint.cainiao.com/print http://cloudprint-docs-resource.oss-cn-shanghai.aliyuncs.com/lpml_schema.xsd"
   xmlns:editor="http://cloudprint.cainiao.com/schema/editor"
   width="50"
-  height="30"
+  height="70"
   splitable="false" >
 
 <!-- 划线
