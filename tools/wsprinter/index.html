@@ -20,11 +20,12 @@
 
 <!-- <p>【 <a href="https://cdn-cloudprint.cainiao.com/waybill-print/client/CNPrintSetup.exe">菜鸟打印组件下载</a> 】</p> -->
 
-<select id="printerList" style="width: 300px;" onchange="changePrinter(this.value)"><option>请确认已运行 CAINIAO 打印组件</option></select>
+<select id="printerList" style="width: 300px;" onchange="changePrinter(this.value)"><option value="0">请确认已运行 CAINIAO 打印组件</option></select>
 
-<button onclick="doConnect();"> 创建链接 </button>
-<button onclick="doDisconnect();"> 关闭链接 </button>
-<button onclick="doGetPrinterConfig();"> 获取打印机配置 </button>
+<button onclick="location.reload(true);">刷新</button>
+<button onclick="doPrinterConfig();"> 打印机选项 </button>
+<button onclick="doClearCache();">清除缓存</button>
+
 宽 <input id="paper_width" type="text" size="1"> 高 <input id="paper_height" type="text" size="1">
 <select id="paper_orientation">
   <option value="">-</option>
@@ -32,15 +33,18 @@
   <option value="1">横向</option>
 </select>
 <button onclick="doSetPrinterConfig();"> 设置打印机配置 </button>
-<button onclick="doPrinterConfig();"> 打印机选项 </button>
 <button onclick="doPrint(false, false, true);"> 打印预览 </button>
 <button onclick="doPrint();"> 打印 </button>
 <!--
 <button onclick="doGetPrinters();"> 获取打印机列表 </button>
+<button onclick="doConnect();"> 创建链接 </button>
+<button onclick="doDisconnect();"> 关闭链接 </button>
+<button onclick="doGetPrinterConfig();"> 获取打印机配置 </button>
+
 <button onclick="doGetAgentInfo();"> 获取客户端版本信息 </button>
 -->
 </div>
-
+<p id="printer_msg"></p>
 <div>
   <p>订单数: <span id="proccessing_count">0<span></p>
   <textarea cols="150" rows="10" name="priter_data" id="priter_data"></textarea>
@@ -75,6 +79,8 @@ var printerList       = document.getElementById("printerList");
 var paper_width       = document.getElementById("paper_width");
 var paper_height      = document.getElementById("paper_height");
 var paper_orientation = document.getElementById("paper_orientation");
+var printer_msg       = document.getElementById("printer_msg");
+
 
 var httpSocket        = 'ws://127.0.0.1:13528';
 var httpsSocket       = 'wss://localhost:13529';
@@ -87,12 +93,14 @@ function doConnect() {
 
   // 打开Socket
   socket.onopen = function(event) {
-    doGetPrinters();
+    if(printerList.value == '0') doGetPrinters();
+
     // 监听消息
     socket.onmessage = function(event) {
-      //if(event.readyState == 1) document.getElementById("printer_status").innerHTML = '已连接';
+      //console.log(event);
 
       var response = JSON.parse(event.data);
+      printer_msg.innerHTML = '状态: ' + response.msg;
 
       switch(response.cmd){
         case 'getPrinters':
@@ -102,7 +110,6 @@ function doConnect() {
             //console.log('打印机列表:', response.printers);
             setSelectPrinterOptions(response.printers, response.defaultPrinter);
           } else {
-            console.log(event);
             return;
           }
           doGetPrinterConfig();
@@ -140,7 +147,8 @@ function doConnect() {
 
     // 监听Socket的关闭
     socket.onclose = function(event) {
-      printerList.innerHTML = '<option>未连接打印组件</option>';
+      printerList.innerHTML = '<option  value="0">未连接打印组件</option>';
+      printer_msg.innerHTML = '状态: 链接断开';
     };
   };
   return status;
@@ -163,6 +171,23 @@ function getRequestObject(cmd) {
 //获取打印机列表
 function doGetPrinters() {
   var request = getRequestObject("getPrinters");
+  if (socket.readyState === 1) {
+    socket.send(JSON.stringify(request));
+  }
+}
+
+//设置默认打印机 Preferences | Properties
+function doSetDefaultPrinter() {
+  var request = getRequestObject("setPrinterConfig");
+  request.defaultPrinter = printerList.value;
+  if (socket.readyState === 1) {
+    socket.send(JSON.stringify(request));
+  }
+}
+
+//清除打印组件的网络缓存
+function doClearCache() {
+  var request = getRequestObject("clearCache");
   if (socket.readyState === 1) {
     socket.send(JSON.stringify(request));
   }
@@ -199,14 +224,14 @@ function doGetPrinterConfig(printer) {
 function doSetPrinterConfig() {
   var request = getRequestObject("setPrinterConfig");
   request.printer = {
-    name: printerList.value,  //打印机名称
-    needTopLogo: false,       //是否需要模板上联的快递logo
-    needBottomLogo: false,    //是否需要模板下联的快递logo
-    horizontalOffset: 0.0,    //水平偏移量
-    verticalOffset: 0.0,      //垂直偏移量
-    forceNoPageMargins: true, //强制设置页面无空边
-    autoOrientation: false,   //按照 orientation 适应纸张方向
-    autoPageSize: false,      //自适应纸张大小
+    name:               printerList.value,  //打印机名称
+    needTopLogo:        false,              //是否需要模板上联的快递logo
+    needBottomLogo:     false,              //是否需要模板下联的快递logo
+    horizontalOffset:   0.0,                //水平偏移量
+    verticalOffset:     0.0,                //垂直偏移量
+    forceNoPageMargins: true,               //强制设置页面无空边
+    autoOrientation:    false,              //按照 orientation 适应纸张方向
+    autoPageSize:       false,              //自适应纸张大小
     orientation: parseInt(paper_orientation.value), //0:纵向; 1: 横向
     paperSize: {
       width: parseFloat(paper_width.value),         //打印机纸张的宽度，单位是毫米
@@ -215,8 +240,8 @@ function doSetPrinterConfig() {
   }
   socket.send(JSON.stringify(request));
 
-  paper_width.value = '';
-  paper_height.value = '';
+  paper_width.value       = '';
+  paper_height.value      = '';
   paper_orientation.value = '';
   doGetPrinterConfig();
 }
@@ -290,12 +315,39 @@ function doPrint(printer, printData, isPreview = false) {
 }
 
 //打印通知(notifyPrintResult)
-
+function notifyPrintResult(callback) {
+  if (typeof callback === 'function' && !notifyPrintResult.includes(callback)) {
+    notifyPrintResult.push(callback);
+  }
+}
 //获取任务打印任务状态(getTaskStatus)
+function doGetTaskStatus(taskID) {
+  if(!taskID || !Array.isArray(taskID) || taskID.length == 0) return;
+
+  var request = getRequestObject("getTaskStatus");
+  request.taskID = taskID; // (array) taskID
+  if (socket.readyState === 1) {
+    socket.send(JSON.stringify(request));
+  }
+}
+
 
 //获取全局配置(getGlobalConfig)
+function doGetGlobalConfig() {
+  var request = getRequestObject("getGlobalConfig");
+  if (socket.readyState === 1) {
+    socket.send(JSON.stringify(request));
+  }
+}
 
 //设置全局配置(setGlobalConfig)
+function doSetGlobalConfig(notifyOnTaskFailure) {
+  var request = getRequestObject("setGlobalConfig");
+  request.notifyOnTaskFailure = notifyOnTaskFailure; //bool
+  if (socket.readyState === 1) {
+    socket.send(JSON.stringify(request));
+  }
+}
 
 //获取客户端版本信息
 function doGetAgentInfo() {
@@ -340,6 +392,12 @@ function setSelectPrinterOptions(printers, defaultPrinter) {
 function changePrinter(printer) {
   doGetPrinterConfig(printer);
 }
+
+var connecting = setInterval(function() {
+  if(printerList.value == "0") {
+    doConnect();
+  }
+}, 3000);
 </script>
 
 </body>
